@@ -67,17 +67,8 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, Product $product): JsonResponse
     {
-        $product = Product::find($id);
-
-        if (! $product) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Produk tidak ditemukan.',
-            ], 404);
-        }
-
         $validated = $request->validate([
             'name'        => 'sometimes|string|max:255',
             'description' => 'nullable|string',
@@ -94,7 +85,6 @@ class ProductController extends Controller
             'data'    => $product,
         ]);
     }
-
     /**
      * Remove the specified resource from storage.
      */
