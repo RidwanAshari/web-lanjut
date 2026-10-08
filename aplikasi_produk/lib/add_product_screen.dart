@@ -20,24 +20,37 @@ class _AddProductScreenState extends State<AddProductScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
+        // Konversi aman ke int (menggunakan int.tryParse atau double.tryParse lalu diconvert ke int)
+        final parsedStock =
+            int.tryParse(_stockController.text) ??
+            double.tryParse(_stockController.text)?.toInt() ??
+            10;
+
         await ApiService.addProduct(
           _nameController.text,
           _priceController.text,
-          stock: int.tryParse(_stockController.text) ?? 10,
+          stock: parsedStock,
         );
-        // Jika tidak ada error, berarti berhasil
-        Navigator.pop(context, true);
+
+        // Jika berhasil, kembali ke halaman sebelumnya dan kirim sinyal 'true'
+        if (mounted) {
+          Navigator.pop(context, true);
+        }
       } catch (e) {
         // Tampilkan alasan error dari server Laravel di SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 4),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('$e'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       } finally {
-        setState(() => _isLoading = false);
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     }
   }
@@ -63,22 +76,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Nama Produk'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Nama tidak boleh kosong' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Nama tidak boleh kosong'
+                    : null,
               ),
               TextFormField(
                 controller: _priceController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Harga Produk'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Harga tidak boleh kosong' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Harga tidak boleh kosong'
+                    : null,
               ),
               TextFormField(
                 controller: _stockController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Stok Produk'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Stok tidak boleh kosong' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Stok tidak boleh kosong'
+                    : null,
               ),
               const SizedBox(height: 20),
               _isLoading
