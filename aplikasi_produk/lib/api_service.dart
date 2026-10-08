@@ -40,15 +40,23 @@ class ApiService {
     }
   }
 
-  // Fungsi POST untuk menambah produk baru dengan penanganan error server
-  static Future<bool> addProduct(String name, dynamic price) async {
+  // Fungsi POST untuk menambah produk baru dengan tambahan parameter stock
+  static Future<bool> addProduct(
+    String name,
+    dynamic price, {
+    int stock = 10,
+  }) async {
     try {
       final num? parsedPrice = num.tryParse(price.toString());
 
       final response = await http.post(
         Uri.parse('$baseUrl/products'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'name': name, 'price': parsedPrice ?? 0}),
+        body: jsonEncode({
+          'name': name,
+          'price': parsedPrice ?? 0,
+          'stock': stock, // Ditambahkan agar lolos validasi Laravel
+        }),
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {

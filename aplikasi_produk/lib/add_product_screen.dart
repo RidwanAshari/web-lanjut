@@ -13,6 +13,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
+  final _stockController = TextEditingController(text: '10'); // Default stok 10
   bool _isLoading = false;
 
   void _submitData() async {
@@ -22,6 +23,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         await ApiService.addProduct(
           _nameController.text,
           _priceController.text,
+          stock: int.tryParse(_stockController.text) ?? 10,
         );
         // Jika tidak ada error, berarti berhasil
         Navigator.pop(context, true);
@@ -38,6 +40,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _priceController.dispose();
+    _stockController.dispose();
+    super.dispose();
   }
 
   @override
@@ -62,6 +72,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 decoration: const InputDecoration(labelText: 'Harga Produk'),
                 validator: (value) =>
                     value!.isEmpty ? 'Harga tidak boleh kosong' : null,
+              ),
+              TextFormField(
+                controller: _stockController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Stok Produk'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Stok tidak boleh kosong' : null,
               ),
               const SizedBox(height: 20),
               _isLoading
