@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'add_product_screen.dart'; // Import halaman form tambah produk
 import 'api_service.dart';
 import 'product_model.dart';
 
@@ -65,6 +66,24 @@ class _ProductScreenState extends State<ProductScreen> {
             },
           );
         },
+      ),
+      // Tombol tambah produk di pojok kanan bawah
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Buka halaman AddProductScreen dan tunggu hasilnya
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddProductScreen()),
+          );
+
+          // Jika produk berhasil disimpan, refresh ulang daftar produk
+          if (result == true) {
+            setState(() {
+              futureProducts = ApiService.getProducts();
+            });
+          }
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

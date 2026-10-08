@@ -39,4 +39,19 @@ class ApiService {
       throw Exception('Error: $e');
     }
   }
+
+  // Tambahan Fungsi POST untuk menambah produk baru
+  static Future<bool> addProduct(String name, dynamic price) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/products'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'name': name, 'price': price}),
+      );
+
+      return response.statusCode == 201 || response.statusCode == 200;
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
 }
