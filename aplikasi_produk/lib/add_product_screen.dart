@@ -19,20 +19,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
-        bool success = await ApiService.addProduct(
+        await ApiService.addProduct(
           _nameController.text,
           _priceController.text,
         );
-        if (success) {
-          Navigator.pop(context, true); // Kembali dan tandai berhasil
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Gagal menambah produk')),
-          );
-        }
+        // Jika tidak ada error, berarti berhasil
+        Navigator.pop(context, true);
       } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Error: $e')));
+        // Tampilkan alasan error dari server Laravel di SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
       } finally {
         setState(() => _isLoading = false);
       }
