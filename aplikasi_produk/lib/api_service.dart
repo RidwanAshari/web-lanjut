@@ -6,7 +6,7 @@ import 'product_model.dart';
 
 class ApiService {
   static const String baseUrl =
-      'https://web-lanjut-production-3e01.up.railway.app/api';
+      'https://web-lanjut-production-3e01.up.railway.app/api/products';
 
   static Future<List<Product>> getProducts() async {
     try {
